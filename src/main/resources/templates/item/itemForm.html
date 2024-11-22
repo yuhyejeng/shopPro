@@ -57,15 +57,13 @@
                         </div>
                     </div>
                     <div class="col-12">
-                        <div class="mb-3">
-                            <label for="formFile" class="form-label">이미지등록</label>
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
-                            <input class="form-control" name="multipartFile" type="file" >
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">대표이미지</label>
+                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFile" type="file" >
+
+                            <button class="btn btn-dark mt-3 addimg" type="button">이미지추가</button>
+
+
 
                         </div>
                     </div>
@@ -92,6 +90,10 @@
                 if(itemNmValid()){
                     return false
                 }
+                if ($(".imgInput").first().val() == ""){
+                alert($(".imgInput").first().val())
+                return false
+                }
             })
             function itemNmValid() {
                 let itemNmVal = $("#itemNm").val()
@@ -99,6 +101,35 @@
                     return true
                 }
             }
+
+            $(".addimg").on("click", function (){
+                let str = '<input class="form-control imgInput" name="multipartFile" type="file">'
+                $(".imgA").append(str)
+
+            })
+
+            bindDomEvent();
+            //이미지 파일 유효성 검사
+            function bindDomEvent() {
+                $(".imgInput").on("change" , function () {
+                    let fileName = $(this).val("\\").pop()  //이미지 파일명
+                    //이미지파일명의 확장자를 추출해서 확인하다.
+                    //dog.jpg
+
+                    let fileExt = fileName.substring(fileName.lastIndexOf(".")+1)
+
+                    if (fileExt != "jpg" && fileExt != "jpeg" &&
+                        fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
+
+                        $(this).val("")
+                        alert("이미지 파일만 넣어주세요")
+                        return false;
+                    }
+                })
+            }
+
+
+
         })
 
     </script>

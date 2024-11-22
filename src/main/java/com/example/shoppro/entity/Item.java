@@ -41,9 +41,8 @@ public class Item extends BaseEntity {
    /* @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;*/
-
-    @OneToMany
-    @JoinColumn(name = "item_id")
+                //mappedBy 참조(join)해줌     //Cascade 모든걸 관여 할건지 /해당만 가능할 건지 설정
+    @OneToMany(mappedBy = "item", cascade = CascadeType.REMOVE)
     private List<ItemImg> itemImgList;
 
 

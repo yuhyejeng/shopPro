@@ -64,23 +64,25 @@ class ItemRepositoryTest {
                             .itemSellStatus(ItemSellStatus.SELL)
                             .stockNumber(100)
                             .build();
+
             item.setItemNm(item.getItemNm() + i);
             item.setItemDetail(item.getItemDetail() + i);
             item.setPrice(item.getPrice() + i);
 
             Item item1 =
-                    itemRepository.save(item);
+            itemRepository.save(item);
+
             log.info(item1);
         }
     }
 
     @Test
     @DisplayName("제품명으로 검색 2가지에서 다시 2가지 검색")
+    @Transactional  // 두개가 참조될 경우 /한개의 부모에 두명의 자식일 경우 필요
     public void findByItemNmTest() {
 
         List<Item> itemListA =
                 itemRepository.findByItemNm("테스트상품1");
-
         itemListA.forEach(item -> log.info(item));
         System.out.println("---------------------------");
 
@@ -90,7 +92,7 @@ class ItemRepositoryTest {
         System.out.println("---------------------------");
 
         itemListA =
-                itemRepository.findByItemNm("테스트");
+                itemRepository.findByItemNmContaining("테스트");
         itemListA.forEach(item -> log.info(item));
         System.out.println("---------------------------");
 
@@ -110,7 +112,7 @@ class ItemRepositoryTest {
         Integer price = 10000;
 
         List<Item> itemList =
-                itemRepository.findByPriceLessThan(price);
+                itemRepository.findByPriceGreaterThan(price);
         for (Item item : itemList) {
             log.info(item);
             log.info("상 품 명 : " + item.getItemNm());
