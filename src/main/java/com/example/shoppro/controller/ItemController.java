@@ -46,6 +46,12 @@ public class ItemController {
         //들어오는값 확인
         log.info("들어오는값 확인" + itemDTO);
 
+        if (multipartFile.get(0).isEmpty()){
+            model.addAttribute("msg", "대표이미지는 꼭 등록해주세요");
+            return "/item/itemForm";
+        }
+
+
         if(multipartFile!= null){
             for (MultipartFile img :  multipartFile){
                 if(!img.getOriginalFilename().equals("")){
@@ -66,18 +72,19 @@ public class ItemController {
             Long savedItemid =
                     itemService.saveItem(itemDTO, multipartFile);
 
+            log.info("상품등록됨!!!!");
+            log.info("상품등록됨!!!!" );
+            log.info("상품등록됨!!!!");
+            log.info("상품등록됨!!!!");
+
+            return  "redirect:/admin/item/read?id=" + savedItemid;
         } catch (Exception e) {
             e.printStackTrace();
             log.info("파일등록간 문제가 발생했습니다.");
             model.addAttribute("msg" , "파일등록을 잘해주세요");
             return "/item/itemForm";        //다시 이전 페이지
         }
-        log.info("상품등록됨!!!!");
-        log.info("상품등록됨!!!!" );
-        log.info("상품등록됨!!!!");
-        log.info("상품등록됨!!!!");
 
-        return  null;
     }
 
     @GetMapping("/admin/item/read")
@@ -110,6 +117,35 @@ public class ItemController {
 
         model.addAttribute("pageResponseDTO", pageResponseDTO);
         return "item/list";
+    }
+
+    @GetMapping("/admin/item/update")
+    public StringadminupdateGet(Long id, PageRequestDTO pageRequestDTO,
+                                Model model, Principal principal){
+
+        //
+        //관리자는 자신의 글만 봐야함
+        // 1 검색하고 값을가지고 확인하고 다시 맞다
+        // 2 검색부터 자신의 값을 가져오자 , 정확히
+//        ItemDTO itemDTO =
+//        itemService.read(id);
+//        if (itemDTO.getCreateBy().equals(principal.getName())){
+//            model.addAttribute("itemDTO", itemDTO);
+//            return "item/update";
+//        } else {
+//            return "redirect:/admin/item/list";
+//        }
+
+        ItemDTO itemDTO = itemService.read(id, principal.getName());
+        if (itemDTO != null){
+            model.addAttribute("itemDTO", itemDTO);
+            return "item/update";
+        }else {
+            return "redirect:/admin/item/list";
+        }
+
+
+
     }
 
 

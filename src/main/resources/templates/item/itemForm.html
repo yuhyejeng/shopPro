@@ -57,12 +57,21 @@
                         </div>
                     </div>
                     <div class="col-12">
+                        <div class="row  main imgpreview">
+
+                        </div>
+                        <div class="row imgpreviewinput imgpreview">
+
+                        </div>
+
+
+
                         <div class="mb-3 imgA">
                             <label for="formFile" class="form-label">대표이미지</label>
-                            <input class="form-control imgInput mainimg" id="formFile" accept="image/*" name="multipartFile" type="file" >
+                            <input class="form-control imgInput mainimg"  id="formFile" accept="image/*" name="multipartFile" type="file" >
 
-                            <button class="btn btn-dark mt-3 addimg" type="button">이미지추가</button>
-
+                            <label for="formFilede" class="form-label">상세 이미지</label>
+                            <input class="form-control imgInput "  id="formFilede" accept="image/*" name="multipartFile" type="file" >
 
 
                         </div>
@@ -85,48 +94,129 @@
 
     <script>
         $(document).ready(function () {
+            let msg =   ..
 
             $("form").on("submit", function (e) {
                 if(itemNmValid()){
                     return false
                 }
-                if ($(".imgInput").first().val() == ""){
-                alert($(".imgInput").first().val())
-                return false
+                if($(".main").find('input:eq(0)') == ""){
+                    //  $(".mainimg").val()==""
+                    //대표이미지가 없을경우
+                    alert("대표이미지를 넣어주세요")
+
+                    return false
                 }
+
+
+
             })
             function itemNmValid() {
                 let itemNmVal = $("#itemNm").val()
                 if(itemNmVal.length < 2 || itemNmVal.length > 50){
+                    alert("이름을 입력해주세요")
+                    alert($(".imgInput").first().val())
                     return true
                 }
             }
 
-            $(".addimg").on("click", function (){
-                let str = '<input class="form-control imgInput" name="multipartFile" type="file">'
-                $(".imgA").append(str)
+            // $(".addimg").on("click", function () {
+            //     let str = '<input class="form-control imgInput" accept="image/*" name="multipartFile" type="file" >'
+            //     $(".imgA").append(str)
+            //
+            //
+            // })
+
+            $(".imgpreview").on("click", "button", function () {
+
+                $(this).parent().remove()
+
 
             })
 
-            bindDomEvent();
+            bindDomEvent()
             //이미지 파일 유효성 검사
             function bindDomEvent() {
-                $(".imgInput").on("change" , function () {
-                    let fileName = $(this).val("\\").pop()  //이미지 파일명
+                $(".imgA").on("change", "input", function () {
+                    let fileName = $(this).val().split("\\").pop() //이미지 파일명
                     //이미지파일명의 확장자를 추출해서 확인하다.
                     //dog.jpg
 
-                    let fileExt = fileName.substring(fileName.lastIndexOf(".")+1)
+                    let fileExt = fileName.substring(fileName.lastIndexOf(".") +1 )
+                    //확장자 소문자로 변환
 
-                    if (fileExt != "jpg" && fileExt != "jpeg" &&
+                    fileExt = fileExt.toLowerCase()
+
+                    if(fileExt != "jpg" && fileExt != "jpeg" &&
                         fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
 
                         $(this).val("")
                         alert("이미지 파일만 넣어주세요")
                         return false;
                     }
+
+                    //이상이 없다면 이미지 미리보기 추가
+                    if(this.classList.contains("mainimg")){
+                        //클래스중에 mainimg가 있다면
+                        console.log("이건 대표이미지 인풋입니다.")
+                        readURL(this);
+                    }else {
+                        readURL1(this);
+                    }
+
+
+
                 })
             }
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        let inputtag = document.createElement("input")
+
+                        inputtag.type = "file"
+                        inputtag.name = "multipartFile"
+                        inputtag.files = input.files
+
+                        let str1 = ` <div class="preview col">
+                                  <img width="100%" src="${e.target.result}">
+                                  <button type='button' class='bb'>올리지 않기</button>
+                                </div>`
+                        $(".main").html(str1)
+                        $(".main").find('div:eq(0)').append(inputtag)
+
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+            function readURL1(input) {
+                if (input.files && input.files[0]) {
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        let inputtag = document.createElement("input")
+
+                        inputtag.type = "file"
+                        inputtag.name = "multipartFile"
+                        inputtag.files = input.files
+
+                        let str1 = ` <div class="preview col">
+                                  <img width="100%" src="${e.target.result}">
+                                  <button type='button' class='bb'>올리지 않기</button>
+                                </div>`
+                        $(".imgpreviewinput").append(str1)
+                        // $(".imgpreviewinput").append(str)
+                        $(".imgpreviewinput").find('div:eq(0)').prepend(inputtag)
+                        $(".imgpreviewinput").find('input:eq(0)').hide()
+
+                    };
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+
+
 
 
 
