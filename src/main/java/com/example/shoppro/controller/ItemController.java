@@ -119,14 +119,15 @@ public class ItemController {
         return "item/list";
     }
 
+
     @GetMapping("/admin/item/update")
-    public StringadminupdateGet(Long id, PageRequestDTO pageRequestDTO,
+    public String adminupdateGet(Long id, PageRequestDTO pageRequestDTO,
                                 Model model, Principal principal){
 
-        //
-        //관리자는 자신의 글만 봐야함
-        // 1 검색하고 값을가지고 확인하고 다시 맞다
-        // 2 검색부터 자신의 값을 가져오자 , 정확히
+        //기존 read는 email을 확인하지 않았다.
+        //관리자는 자신의 글만 봐야함으로 자신의 상품을 검색하는 쿼리는 추가하자
+        // 1 검색하고 값을가지고 확인하고 다시 맞다면 list , 만들기 쉽다
+        // 2 검색부터 자신의 값을 가져오자 , 정확하다?
 //        ItemDTO itemDTO =
 //        itemService.read(id);
 //        if (itemDTO.getCreateBy().equals(principal.getName())){
@@ -136,7 +137,8 @@ public class ItemController {
 //            return "redirect:/admin/item/list";
 //        }
 
-        ItemDTO itemDTO = itemService.read(id, principal.getName());
+//        ItemDTO itemDTO = itemService.read(id, principal.getName());
+        ItemDTO itemDTO = itemService.read(id);
         if (itemDTO != null){
             model.addAttribute("itemDTO", itemDTO);
             return "item/update";
@@ -147,6 +149,8 @@ public class ItemController {
 
 
     }
+
+
 
 
 }
