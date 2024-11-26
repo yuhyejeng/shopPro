@@ -177,7 +177,17 @@
 
                         inputtag.type = "file"
                         inputtag.name = "multipartFile"
-                        inputtag.files = input.files
+                        // inputtag.files = input.files  //참조값 주소
+
+                        const dataTranster = new DataTransfer();
+                        const fileDatas = Array.from(input.files);
+                        /*신규 파일데이터는..
+                        new DataTransfer();
+                        이걸로 files 라는 객체를 만들수 있어서..
+                        이걸로 만들어서 배열 돌리면서 추가추가 한거임*/
+                        fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                        inputtag.files = dataTranster.files;
+
 
                         let str1 = ` <div class="preview col">
                                   <img width="100%" src="${e.target.result}">
@@ -185,6 +195,8 @@
                                 </div>`
                         $(".main").html(str1)
                         $(".main").find('div:eq(0)').append(inputtag)
+                        $(".main").find('search-input').hide()
+                        $(".imgInput").val()
 
                     };
                     reader.readAsDataURL(input.files[0]);
@@ -200,6 +212,8 @@
                         inputtag.type = "file"
                         inputtag.name = "multipartFile"
                         inputtag.files = input.files
+
+
 
                         let str1 = ` <div class="preview col">
                                   <img width="100%" src="${e.target.result}">

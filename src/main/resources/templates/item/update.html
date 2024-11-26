@@ -5,81 +5,106 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>아이템 등록</title>
+    <title>아이템 수정</title>
 </head>
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/admin/item/new" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
+    <form action="/admin/item/update" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
 
+        <input name="id" type="hidden" th:value="${itemDTO.id}">
         <div class="row">
             <div class="col-8 offset-2">
                 <div class="row">
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="itemNm" class="form-label">상품명</label>
-                            <input type="text" class="form-control" th:field="*{itemNm}"  required id="itemNm" readonly>
+                            <input type="text" class="form-control" th:field="*{itemNm}"  required id="itemNm" >
                             <p th:if="${#fields.hasErrors('itemNm')}" th:errors="*{itemNm}" class="fieldError"></p>
+
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="price" class="form-label">가격</label>
-                            <input type="number" min="0" class="form-control" th:field="*{price}" id="price" readonly>
+                            <input type="number" min="0" class="form-control" th:field="*{price}" id="price">
                             <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="fieldError"></p>
+
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="stockNumber"  class="form-label">재고 수량</label>
-                            <input type="number" min="0" class="form-control" th:field="*{stockNumber}" id="stockNumber" readonly>
+                            <input type="number" min="0" class="form-control" th:field="*{stockNumber}" id="stockNumber">
                             <p th:if="${#fields.hasErrors('stockNumber')}" th:errors="*{stockNumber}" class="fieldError"></p>
+
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="itemDetail" class="form-label">상세설명 </label>
-                            <textarea class="form-control" th:field="*{itemDetail}" id="itemDetail" rows="3" readonly></textarea>
+                            <textarea class="form-control" th:field="*{itemDetail}" id="itemDetail" rows="3"></textarea>
                             <p th:if="${#fields.hasErrors('itemDetail')}" th:errors="*{itemDetail}" class="fieldError"></p>
+
                         </div>
                     </div>
-
                     <div class="col-12">
                         <div class="mb-3">
                             <label for="itemSellStatus" class="form-label">상품 판매 상태 </label>
-                            <input  th:field="*{itemSellStatus}" id="itemSellStatus" class="form-control"  readonly>
+                            <select  th:field="*{itemSellStatus}" id="itemSellStatus" class="form-select" aria-label="Default select example">
+                                <option value="SELL">판매중</option>
+                                <option value="SOLD_OUT">품절</option>
+                            </select>
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <div class="mb-3 imgA">
+                        <div class="mb-3 ">
                             <th:block th:each="img: ${itemDTO.itemImgDTOList}">
-                                <div class="row main imgpreview">
 
-                                        <th:block th:if="${img.repimgYn == 'Y'}">
-                                            <div class="col-12">
-                                                대표이미지
-                                                <img width="100%" th:src="${img.imgUrl}">
-                                                <button th:value="${img.id}">삭제</button>
-                                            </div>
-                                        </th:block>
+                                <th:block th:if="${img.repimgYn == 'Y'}">
+                                    <div class="row main imgpreview">
+                                        <div class="col-12">
+                                            대표이미지
+                                            <img width="100%" th:src="${img.imgUrl}">
+                                            <input type="hidden" name="mainino" th:value="${img.id}">
+                                        </div>
+                                    </div>
+                                </th:block>
 
-                                        <th:block th:unless="${img.repimgYn == 'Y'}">
-                                            <div class="col">
-                                                <img width="100%" th:src="${img.imgUrl}">
-                                                <button th:value="${img.id}">삭제</button>
-                                            </div>
-                                        </th:block>
-                                </div>
                             </th:block>
+                            <div class="row imgpreviewinput imgpreview">
+                                <th:block th:each="img: ${itemDTO.itemImgDTOList}">
+
+                                    <th:block th:unless="${img.repimgYn == 'Y'}">
+
+                                        <div class="col">
+                                            <img width="100%" th:src="${img.imgUrl}">
+                                            <button type="button" th:value="${img.id}">삭제</button>
+                                        </div>
+
+                                    </th:block>
+
+                                </th:block>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <button type="button" class="btn btn-dark">수정</button>
+
+                        <div class="mb-3 imgA">
+                            <label for="formFile" class="form-label">대표이미지</label>
+                            <input class="form-control imgInput mainimg"  id="formFile" accept="image/*" name="multipartFile" type="file" >
+
+                            <label for="formFilede" class="form-label">상세 이미지</label>
+                            <input class="form-control imgInput "  id="formFilede" accept="image/*" name="multipartFile" type="file" >
+
+
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <button class="btn btn-dark">저장</button>
                         <button type="button">목록</button>
                     </div>
                 </div>
@@ -93,14 +118,19 @@
 
 <th:block layout:fragment="script">
 
-    <script th:inline="">
+    <script th:inline="javascript">
         $(document).ready(function () {
+            let msg = [[${msg}]]
+            if(msg!=null){
+                alert(msg)
+            }
+
 
             $("form").on("submit", function (e) {
                 if(itemNmValid()){
                     return false
                 }
-                if($(".imgInput").first().val()  == ""){
+                if($(".main").find('input:eq(0)')  == ""){
                     //  $(".mainimg").val()==""
                     //대표이미지가 없을경우
                     alert("대표이미지를 넣어주세요")
@@ -120,9 +150,21 @@
                 }
             }
 
-            $(".addimg").on("click", function () {
-                let str = '<input class="form-control imgInput" name="multipartFile" type="file" >'
-                $(".imgA").append(str)
+            // $(".addimg").on("click", function () {
+            //     let str = '<input class="form-control imgInput" accept="image/*" name="multipartFile" type="file" >'
+            //     $(".imgA").append(str)
+            //
+            //
+            // })
+
+            $(".imgpreview").on("click", "button", function () {
+
+                let num = $(this).val()
+                let str = `<input type="hidden" name="delino" value="${num}">`
+
+                $(this).parent().remove()
+
+                $(".imgpreviewinput").append(str)
 
 
             })
@@ -148,8 +190,83 @@
                         return false;
                     }
 
+                    //이상이 없다면 이미지 미리보기 추가
+                    if(this.classList.contains("mainimg")){
+                        //클래스중에 mainimg가 있다면
+                        console.log("이건 대표이미지 인풋입니다.")
+                        readURL(this);
+
+                    }else {
+                        readURL1(this);
+
+
+                    }
+
+
+
                 })
             }
+            function readURL(input) {
+                if (input.files && input.files[0]) {
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        let inputtag = document.createElement("input")
+
+                        inputtag.type = "file"
+                        inputtag.name = "multipartFiles"
+
+                        const dataTranster = new DataTransfer();
+                        const fileDatas = Array.from(input.files);
+                        fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                        inputtag.files = dataTranster.files;
+
+                        let str1 = ` <div class="preview col">
+                                      <img width="100%" src="${e.target.result}">
+                                      <button type='button' class='bb'>올리지 않기</button>
+                                    </div>`
+                        $(".main").html(str1)
+                        $(".main").find('div:eq(0)').append(inputtag)
+                        //input.value = "";
+                        $(".mainimg").val("")
+
+                    };
+                    reader.readAsDataURL(input.files[0]);
+
+                }
+            }
+            function readURL1(input) {
+                if (input.files && input.files[0]) {
+
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        let inputtag = document.createElement("input")
+                        inputtag.type = "file"
+                        inputtag.name = "multipartFiles"
+
+                        const dataTranster = new DataTransfer();
+                        const fileDatas = Array.from(input.files);
+                        fileDatas.forEach(file =>  dataTranster.items.add(file) );
+                        inputtag.files = dataTranster.files;
+
+                        let str1 = ` <div class="preview col">
+                                  <img width="100%" src="${e.target.result}">
+                                  <button type='button' class='bb'>올리지 않기</button>
+                                </div>`
+                        $(".imgpreviewinput").prepend(str1)
+
+                        $(".imgpreviewinput").find('div:eq(0)').prepend(inputtag)
+                        $(".imgpreviewinput").find('input:eq(0)').hide()
+                        // $(".imgInput").val("")
+
+                        input.value = "";
+                    };
+                    reader.readAsDataURL(input.files[0]);
+
+                }
+            }
+
+
 
 
 

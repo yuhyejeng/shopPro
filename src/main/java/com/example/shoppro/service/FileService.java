@@ -33,7 +33,7 @@ public class FileService {
         //asfdlkasjfl.jpg
 
         //경로
-        String fileUploadFullUrl= itemImgLocation +"/"+savedFileName;
+        String fileUploadFullUrl= itemImgLocation+"/"+savedFileName;
 
         //물리적인 저장   //다른방법으로는
         //        multipartFile.transferTo(file);
@@ -42,6 +42,19 @@ public class FileService {
         fos.close();
 
         return savedFileName;
+    }
+
+    public void removefile(String imgName){
+        String delFileurl = itemImgLocation + "/" + imgName;
+        System.out.println(delFileurl);
+        System.out.println(delFileurl);
+        System.out.println(delFileurl);
+        System.out.println(delFileurl);
+        File file = new File(delFileurl);
+
+        if (file.exists()){//파일존재여부확인
+            file.delete();
+        }
     }
 
 
