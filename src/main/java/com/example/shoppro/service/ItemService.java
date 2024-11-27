@@ -67,6 +67,7 @@ public class ItemService {
 
         return itemDTO;
     }
+
     public ItemDTO read(Long id, String email){
 
 
@@ -143,31 +144,47 @@ public class ItemService {
                 }
             }
         }
-        if (mainino == null) {
-            //대표이미지가 변경 (itemid로 찾는다. )
-            //select  * from item_img where item_id = 450 and repimg_yn='Y';
-            //대표이미지를 0번 파일이 y로 하고
-            // 기존이미지 대표이미지 삭제 또는 기존대표이미지 url변경
-            log.info("대표이미지 변경");
 
+        try {
+            itemImgService.update(id, multipartFiles, mainino);
 
-        }else {
-            //대표이미지가 변경 X
-            // 대표이미지 체크여부가 다 N
-            log.info("대표이미지 미변경");
-
-            try {
-                itemImgService.update(id, multipartFiles, mainino);
-
-            }catch (IOException e){
-                // 리다이렉트 업데이트에 id값 가지고 갈까?
-                // TODO: 2024-11-26
-            }
-
+        }catch (IOException e){
+            // 리다이렉트 업데이트에 id값 가지고 갈까?
+            // TODO: 2024-11-26
         }
-
-
         return  null;
+    }
+
+
+
+
+
+    public void remove(Long id){
+        log.info("서비스로 들어온 삭제할 아이템번호: " + id);
+
+        itemRepository.deleteById(id);
+
+        //삭제를 테스트 할수 있는 조건 만들기
+
+    }
+
+    public PageResponseDTO<ItemDTO> mainlist(PageRequestDTO pageRequestDTO) {
+
+
+        Pageable pageable = pageRequestDTO.getPageable("id");
+        Page<Item> items =
+                itemRepository.getAdminItemPage(pageRequestDTO, pageable);
+        List<ItemDTO> itemDTOPage =
+                items.getContent().stream().map(item -> modelMapper.map(item, ItemDTO.class))
+                        .collect(Collectors.toList());
+
+        PageResponseDTO<ItemDTO> itemDTOPageResponseDTO
+                = PageResponseDTO.<ItemDTO>withAll()
+                .pageRequestDTO(pageRequestDTO)
+                .dtoList(itemDTOPage)
+                .total((int) items.getTotalElements())
+                .build();
+        return itemDTOPageResponseDTO;
     }
 
 

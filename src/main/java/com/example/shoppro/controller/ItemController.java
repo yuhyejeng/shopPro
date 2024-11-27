@@ -6,6 +6,7 @@ import com.example.shoppro.dto.PageResponseDTO;
 import com.example.shoppro.entity.Item;
 import com.example.shoppro.service.ItemService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.Id;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -170,5 +171,32 @@ public class ItemController {
         return null;
     }
 
+    @PostMapping("admin/item/del")
+    public String delitem(Long id){
+
+        log.info("삭제할 아이템번호 : " + id);
+        itemService.remove(id);
+
+        return "redirect:/admin/item/list";
+    }
+
+    @GetMapping("/item/read")
+    public String read(Long id, Model model, RedirectAttributes redirectAttributes){
+
+        try {
+            ItemDTO itemDTO =
+                    itemService.read(id);
+
+            model.addAttribute("itemDTO", itemDTO);
+
+            return "item/itemDtl";
+
+        } catch (EntityNotFoundException e) {
+            redirectAttributes.addFlashAttribute("msg", "존재하지 않는 상품입니다.");
+            return "redirect:/";
+            //item/list?msg=존재하지
+        }
+
+    }
 
 }
