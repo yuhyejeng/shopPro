@@ -43,7 +43,8 @@ public class Item extends BaseEntity {
     private Member member;*/
                 //mappedBy 참조(join)해줌     //Cascade 모든걸 관여 할건지 /해당만 가능할 건지 설정
 
-    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL ,
+            orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ItemImg> itemImgList;
 
 
