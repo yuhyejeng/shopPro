@@ -1,8 +1,9 @@
 package com.example.shoppro.controller;
 
+import com.example.shoppro.constant.OrderStatus;
+import com.example.shoppro.dto.ItemDTO;
 import com.example.shoppro.dto.OrderDTO;
 import com.example.shoppro.dto.OrderHistDTO;
-import com.example.shoppro.entity.Order;
 import com.example.shoppro.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Controller
 @RequiredArgsConstructor
@@ -29,84 +31,120 @@ public class OrderController {
 
     private final OrderService orderService;
 
-    //주문하기 //주문하기는 상품의 읽기 페이지에서
+    //주문하기  //주문하기는 상품의 읽기 페이지에서
     // 사용자가 볼수 있으므로 , 따로 get으로 읽기페이지는 만들지 않는다.
-    // 대신 그 페이지에서 보내주는 데이터를 바탕으로 orders, orderItem
-    // 에 데이터를 입력하는 역할을 한다
+    //대신 그 페이지에서 보내주는 데이터를 바탕으로 orders, orderItem
+    // 에 데이터를 입력하는 역할을 한다.
     //2가지 방법
     //1. 일반적인 컨트롤러로 데이터를 받고 다시 주문내역으로 이동한다.
-        //일반적인 컨트롤러를 쓰더라도 responseEntity 를 사용하여 rest처럼 데이터만을
-        //받을수 있다.
-    //2. rest 컨트롤러로 데이터를 받고 다시 주문내역으로 이동한다
-    // @RequestBody 쓰면 application/json;  charset = utf-8,
+    //일반적인 컨트롤러를 쓰더라도 responseEntity 를 사용하여 rest처럼 데이터만을
+    //받을수 있다.
+    //2. rest 컨트롤러로 데이터를 받고 다시 주문내역으로 이동한다.
+    //@RequestBody 쓰면  application/json; charset = utf-8 , 이건 꼭 post에서 씀
     // 키 : 벨류 중에 키가 "키" 이렇게 들어가야함
     @PostMapping("/order")
-    public ResponseEntity order(@Valid OrderDTO orderDTO, BindingResult bindingResult, Principal principal, Long id, Long count){
+    public   ResponseEntity order(@Valid OrderDTO orderDTO, BindingResult bindingResult , Principal principal){
 
-        //유효성검사
-        if (bindingResult.hasErrors()){
-            StringBuffer sb = new StringBuffer();   //String
+        //만약에 아이템id가 없다면
+        //만약에 수량이 없다면
+        // 유효성검사
+        if(bindingResult.hasErrors()){
+            StringBuffer sb = new StringBuffer();       //String
 
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors(); //각 필드 에러
+            List<FieldError> fieldErrors  = bindingResult.getFieldErrors(); // 각 필드 에러
 
-            for (FieldError fieldError : fieldErrors){
-                log.info("필드 :" + fieldError.getField() + "메시지 : " + fieldError.getDefaultMessage());
+            for(FieldError fieldError : fieldErrors){
+                log.info( "필드 : " + fieldError.getField()  +  " 메시지 : "+ fieldError.getDefaultMessage() );
                 sb.append(fieldError.getDefaultMessage());
+
 
             }
             log.info(sb.toString());
-            return new ResponseEntity<String>(sb.toString(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String >(sb.toString(), HttpStatus.BAD_REQUEST);
+
         }
 
-        //주문은 로그인한 사용자 물론 판매자또한 다른 아이템을 자기아이템을
+        //주문은 로그인한 사용자 물론 판매자또한 다른아이템을 자기아이템을
         // 살수 있다. 로그인한 사람만 이 주소로 들어올수 있다. 시큐리티에서 확인
-        // 또는 들어올때 principal!=null 이라면 로그인을 한 사람이다.
+        // 또는 들어올때 principal!=null 이라면 로그인을 한사람이다.
 
         log.info("사용자가 현재 주문하려는 내용 " + orderDTO);
 
-        // 저장을 해야한다.
+        //저장을 해야한다.
         Long result =
-        orderService.order(orderDTO, principal.getName());
+                orderService.order(orderDTO, principal.getName());
 
-        if (result == null){
-            return new ResponseEntity<String>("주문수량이 판매가능수량보다 많습니다.", HttpStatus.BAD_REQUEST);
+        if(result == null){
+            return new ResponseEntity<String>("주문수량이 판매가능수량보다 많습니다.", HttpStatus.OK);
 
         }
         return new ResponseEntity<String>("주문완료", HttpStatus.OK);
 
-
     }
 
-    @GetMapping({"/orders", "/orders/{page}" })   //두개 쓸 때  "/orders/{page}" }
-    public String orderHist(@PathVariable("page")Optional<Integer> Page ,
-                            Principal principal, Model model){
+
+    @GetMapping({"/orders", "/orders/{page}" })
+    public String orderHist(@PathVariable("page") Optional<Integer> page ,
+                            Principal principal , Model model) {
 
         log.info("진입");
-        if (principal == null){
+        if(principal ==null){
             log.info("로그인이 필요함");
-            log.info("로그인이 필요함");
-            log.info("로그인이 필요함");
-            log.info("로그인이 필요함");
+
 
             return "redirect:/members/login";
         }
 
-        Pageable pageable = PageRequest.of(Page.isPresent() ? Page.get(): 0, 4);
+        Pageable pageable = PageRequest.of(  page.isPresent() ? page.get() : 0,  4);
         log.info(pageable);
 
         String email = principal.getName();
 
         Page<OrderHistDTO> orderHistDTOPage =
-        orderService.getOrderList(email, pageable);
-        //페이징처리에 필요하던것들 start end next pre t/f  total
+                orderService.getOrderList(email, pageable);
+        //페이징처리에 필요하던것들 start end next pre t/f   total
 
-        model.addAttribute("orders", orderHistDTOPage);
+        //단방향이라면
+        //order , orderItem을 가져온다.  pk값 email을 가지고 가져온다.
+
+        model.addAttribute("orders" , orderHistDTOPage);
         //html 들어가서 getContent() 함수 호출
         model.addAttribute("page", pageable.getPageNumber());
         model.addAttribute("maxPage", 5);
 
         return "order/orderHist";
     }
+
+    @PostMapping("/order/{orderId}/cancel")
+    public  ResponseEntity cancelOrder(
+            @PathVariable("orderId") Long orderId , Principal principal){
+
+        //orderId 는 취소할 orderId 이다 .
+        //orderId를 삭제하고 , orderItem에서 orderId를 참조하고 있는 orderItem을 삭제한다.
+        // 단방향일경우 orderItem을 먼저 삭제(자식부터 삭제) 하고
+        // orderId를 삭제 하면 된다. 부모에 달린 댓글을 먼저 삭제하고 부모글을 지운다
+        log.info("취소할 주문번호" + orderId);
+        log.info("최소할 주문번호로 달린 아이템들");
+
+        if(!orderService.validateOrder(orderId, principal.getName())){
+            //내 제품이 아니다.
+
+            return new ResponseEntity<String>("주문 취소 권한이 없습니다.", HttpStatus.FORBIDDEN);
+
+        }
+
+
+        //취소를 한다. orderStatus를 cancel로 바꾸고 , 주문했던 아이템들의 수량도 돌려놓고
+        // 주문에 달린 주문아이템들은 데이터를 가지고 있다.
+
+        orderService.cancelOrder(orderId);
+
+
+        return new ResponseEntity<Long >(orderId, HttpStatus.OK);
+
+    }
+
+
 
 
 

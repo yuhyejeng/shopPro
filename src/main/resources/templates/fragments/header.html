@@ -9,14 +9,14 @@
 <th:block th:fragment="header">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-            <a class="navbar-brand" href="#">Navbar</a>
+            <a class="navbar-brand" href="/">Navbar</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                        <a class="nav-link active" aria-current="page" href="/">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#">Link</a>
@@ -26,8 +26,8 @@
                             상품 관리자
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">상품등록</a></li>
-                            <li><a class="dropdown-item" href="#">상품관리(목록)</a></li>
+                            <li><a class="dropdown-item" href="/admin/item/new">상품등록</a></li>
+                            <li><a class="dropdown-item" href="/admin/item/list">상품관리(목록)</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">Something else here</a></li>
                         </ul>
@@ -38,14 +38,13 @@
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">장바구니</a></li>
-                            <li><a class="dropdown-item" href="#">구매이력</a></li>
+                            <li><a class="dropdown-item" href="/orders">구매이력</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="#">나의 정보</a></li>
-                            <li><a class="dropdown-item" href="#">로그인</a></li>
-                            <li><a class="dropdown-item" href="#">로그아웃</a></li>
+                            <li><a class="dropdown-item" href="/members/login">로그인</a></li>
+                            <li><a class="dropdown-item" href="/members/logout">로그아웃</a></li>
                         </ul>
                     </li>
-
                     <li class="nav-item">
                         <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                     </li>
@@ -58,6 +57,7 @@
         </div>
     </nav>
 </th:block>
+
 
 </body>
 </html>

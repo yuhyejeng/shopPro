@@ -10,7 +10,7 @@
 <body>
 <th:block layout:fragment="content">
 
-    <form action="/admin/item/new" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
+    <form action="#" method="post" th:object="${itemDTO}" enctype="multipart/form-data">
 
         <div class="row">
             <div class="col-8 offset-2">
@@ -84,7 +84,7 @@
                     </div>
 
                     <div class="col-12">
-                        <button type="button" class="btn btn-dark">수정</button>
+                        <button type="button" class="btn btn-dark updatebtn">수정</button>
                         <button type="button">목록</button>
                     </div>
                 </div>
@@ -98,70 +98,22 @@
 
 <th:block layout:fragment="script">
 
-    <script>
+    <script th:inline="javascript">
+        let itemid = [[${itemDTO.id}]]
+
         $(document).ready(function () {
-
-            $("form").on("submit", function (e) {
-                if(itemNmValid()){
-                    return false
-                }
-                if($(".imgInput").first().val()  == ""){
-                    //  $(".mainimg").val()==""
-                    //대표이미지가 없을경우
-                    alert("대표이미지를 넣어주세요")
-
-                    return false
-                }
-
-
-
+            $(".updatebtn").on("click", function () {
+                location.href = "/admin/item/update?id=" + itemid
             })
-            function itemNmValid() {
-                let itemNmVal = $("#itemNm").val()
-                if(itemNmVal.length < 2 || itemNmVal.length > 50){
-                    alert("이름을 입력해주세요")
-                    alert($(".imgInput").first().val())
-                    return true
-                }
-            }
-
-            $(".addimg").on("click", function () {
-                let str = '<input class="form-control imgInput" name="multipartFile" type="file" >'
-                $(".imgA").append(str)
-
-
-            })
-
-            bindDomEvent()
-            //이미지 파일 유효성 검사
-            function bindDomEvent() {
-                $(".imgA").on("change", "input", function () {
-                    let fileName = $(this).val().split("\\").pop() //이미지 파일명
-                    //이미지파일명의 확장자를 추출해서 확인하다.
-                    //dog.jpg
-
-                    let fileExt = fileName.substring(fileName.lastIndexOf(".") +1 )
-                    //확장자 소문자로 변환
-
-                    fileExt = fileExt.toLowerCase()
-
-                    if(fileExt != "jpg" && fileExt != "jpeg" &&
-                        fileExt != "gif" && fileExt != "png" && fileExt != "bmp"){
-
-                        $(this).val("")
-                        alert("이미지 파일만 넣어주세요")
-                        return false;
-                    }
-
-                })
-            }
-
 
 
 
         })
 
+
+
     </script>
+
 
 </th:block>
 

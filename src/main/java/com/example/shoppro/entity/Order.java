@@ -12,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString (exclude = "order")//(exclude = "itemImgList") // toSrting 변수 제외
+@ToString//(exclude = "itemImgList") // toSrting 변수 제외
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
