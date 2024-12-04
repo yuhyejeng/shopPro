@@ -28,6 +28,7 @@ public class SecurityConfig {
                         authorization -> authorization
                                 .requestMatchers("/members/login/**").permitAll()      //로그인페이지는 누구나 접속이 가능한 권한
                                 .requestMatchers("/cart").authenticated() // 로그인 한 사람만 접속 가능
+//                                .requestMatchers("/admin/**").hasAnyRole("ADMIN", "USER")
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 .requestMatchers("/user/list").hasRole("ADMIN")
                                 .requestMatchers("/order/**").authenticated()
@@ -55,9 +56,10 @@ public class SecurityConfig {
                         //컨트롤러에서 만들어줄껄?
 
                 )
-        // 예외처리 // 로그인이 되지 않은 사용자 , 권한이 없는 사용자 접속시 취할 행동들
+                // 예외처리 // 로그인이 되지 않은 사용자 , 권한이 없는 사용자 접속시 취할 행동들
                 .exceptionHandling(
-                        a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint()).accessDeniedHandler(new CustomAccessDeniedHandler())
+                        a -> a.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                                .accessDeniedHandler(new CustomAccessDeniedHandler())
 
                 )
         ;
