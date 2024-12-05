@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.awt.print.Pageable;
+import javax.swing.text.html.Option;
+import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -21,30 +23,37 @@ import java.util.Optional;
 public class MainController {
 
     private final ItemService itemService;
-    //private final boardService  게시물도 가지고 싶다?
 
-    // 작성자에 의해서 // 판매중 // 일자 순으로 검색하는 ItemSearchDTO
+
+    //작성자에 의해서 // 판매중 // 일자 순으로 검색하는 ItemSearchDTO
     //page현재페이지 받고 //size도 받고 // Pageable 도 페이징처리를 위해서 받고
-
     @GetMapping(value = "/")
-    public String main(PageRequestDTO pageRequestDTO, Model model){ //, Optional<Integer> page
+    public String main(PageRequestDTO pageRequestDTO, Model model){  // , Optional<Integer> page
 
-//        Pageable pageable = PageRequest.of(page.isPresent() ? page.get(): 0,10);
+
+        //Pageable pageable = PageRequest.of(page.isPresent() ? page.get(): 0, 10);
         //기존에 만들었던 list는 pageable과 email을 받음으로
-        //자신이 만든 item들의 list만 받아왔다.
-        // 그러면 email이 null 그로니까 로그인을 안한사람은 못본다
+        // 자신이 만든 item들의 list만 받아왔다.
+        // 그러면 email이 null 그러니까 로그인을 안한사람은 못본다
         // 그래서 list를 추가로 만들던가 아니면 null일 경우와
-        //null이 아닐경우에 따라서 동적인 쿼리를 만들면 된다. 로그인한사람은 유저야 메인이야
+        // null이 아닐경우에 따라서 동적인 쿼리를 만들면 된다. 로그인한사람은 유저야 메인이야
         // 그러면 자신이 만든 아이템만 봐야해 그래서 새로만들자
 
         pageRequestDTO.setSize(6);
-        PageResponseDTO<ItemDTO> pageResponseDTO =
-        itemService.mainlist(pageRequestDTO);
-        //현재페이지, 1페이지당 사이즈, 검색키워드 등등이 있다면 그에 맞는 값들
+        PageResponseDTO<ItemDTO>  pageResponseDTO =
+                itemService.mainlist(pageRequestDTO);
+        //현재페이지, 1페이지당 사이즈 , 검색키워드 등등이 있다면 그에 맞는 값들
         // start, end, pre, next 이런것들 총페이지수 등등
+        model.addAttribute("pageResponseDTO", pageResponseDTO);
+
+
 
         return "main";
 
-
     }
+
+
+
+
+
 }

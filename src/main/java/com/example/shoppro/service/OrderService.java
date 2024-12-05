@@ -1,10 +1,12 @@
 package com.example.shoppro.service;
 
 import com.example.shoppro.constant.OrderStatus;
+import com.example.shoppro.dto.CartOrderDTO;
 import com.example.shoppro.dto.OrderDTO;
 import com.example.shoppro.dto.OrderHistDTO;
 import com.example.shoppro.dto.OrderItemDTO;
 import com.example.shoppro.entity.*;
+import com.example.shoppro.repository.CartItemRepository;
 import com.example.shoppro.repository.ItemRepository;
 import com.example.shoppro.repository.MemberRepository;
 import com.example.shoppro.repository.OrderRepository;
@@ -31,6 +33,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final ItemRepository itemRepository;
     private final MemberRepository memberRepository;
+
 
 
     //주문 order, orderItem
@@ -151,6 +154,44 @@ public class OrderService {
     }
 
 
+    public Long orders(List<OrderDTO> orderDTOList, String email){
+
+        //주문을 했다면 판매하고 있는 상품의 수량 변경
+
+
+        Member member = memberRepository.findByEmail(email);
+        List<OrderItem> orderItemList = new ArrayList<>();
+        Order  order = new Order();
+
+        for(OrderDTO orderDTO   : orderDTOList){
+            Item item =
+                    itemRepository.findById(orderDTO.getItemId())
+                            .orElseThrow(EntityNotFoundException::new);
+
+
+            OrderItem orderItem = new OrderItem();
+            orderItem.setItem(item);
+            orderItem.setCount(orderDTO.getCount()  );
+            orderItem.setOrderPrice(item.getPrice());
+            orderItem.setOrder(order);
+
+            item.setStockNumber(item.getStockNumber()   - orderDTO.getCount() );
+
+            orderItemList.add(orderItem);
+
+        }
+        order.setMember(member);
+        order.setOrderStatus(OrderStatus.ORDER);
+        order.setOrderDate(LocalDateTime.now());
+        order.setOrderItemList(orderItemList);
+
+        orderRepository.save(order);
+
+        return order.getId();
+
+    }
+
+
     //구매이력
     public Page<OrderHistDTO> getOrderList(String email, Pageable pageable) {
         //repository에서 필요한 email
@@ -170,7 +211,7 @@ public class OrderService {
 
             OrderHistDTO orderHistDTO = new OrderHistDTO();
             orderHistDTO.setOrderId(order.getId());
-            orderHistDTO.setOrderDate(order.getOrderDate().toString());
+            orderHistDTO.setOrderDate(order.getOrderDate());
             orderHistDTO.setOrderStatus(order.getOrderStatus());
 
             List<OrderItem> orderItemList = order.getOrderItemList();
@@ -204,5 +245,7 @@ public class OrderService {
         }
         return new PageImpl<OrderHistDTO>(orderHistDTOList, pageable, totalCount);
     }
+
+
 
 }

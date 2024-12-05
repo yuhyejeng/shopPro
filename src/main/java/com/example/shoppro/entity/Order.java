@@ -12,19 +12,20 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@ToString//(exclude = "itemImgList") // toSrting 변수 제외
+@ToString //(exclude = "itemImgList")  //toString 변수 제외할 변수명
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Table(name = "orders")
 public class Order extends BaseTimeEntity {
 
+
     @Id
     @Column(name = "order_id")       //테이블에서 매핑될 컬럼
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne  //회원 엔티티와 로 매핑
+    @ManyToOne //회원 엔티티와 일대일로 매핑
     @JoinColumn(name = "member_id") //매핑할 외래키지정
     private Member member;
 
@@ -33,7 +34,7 @@ public class Order extends BaseTimeEntity {
     //주인은 orderItem 엔티티 order는 주인이 아니므로
     // mappedby 속성으로 주인설정 : order를 mappedby에 적어준 이유
     // orderItem에 있는 order에 의해 관리된다
-    // orphanRemoval = true
+    // orphanRemoval =true
 
     // Entity를 가져왔을때 order.orderItemList 값이 있다면
     // order.orderItemList.remove(0);
@@ -42,13 +43,21 @@ public class Order extends BaseTimeEntity {
             orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItemList = new ArrayList<>();
 
-    public void setOrderItemList(OrderItem item){
+    public void setOrderItemList(OrderItem item ) {
         this.orderItemList.add(item);
     }
 
-    private LocalDateTime orderDate;    //주문일
+    public void setOrderItemList(List<OrderItem>  orderItemList ) {
+        this.orderItemList = orderItemList;
+    }
+
+    private LocalDateTime orderDate;  //주문일
+
 
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+
+
+
 
 }

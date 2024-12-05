@@ -67,7 +67,6 @@ public class ItemService {
 
         return itemDTO;
     }
-
     public ItemDTO read(Long id, String email){
 
 
@@ -118,18 +117,19 @@ public class ItemService {
 
 
     public ItemDTO update(ItemDTO itemDTO, Long id, List<MultipartFile> multipartFiles, Integer[] delino, Long mainino) {
-        //아이템 수정
+        // 아이템 수정
 
         Item item =
-        itemRepository.findById(itemDTO.getId())
-                .orElseThrow(EntityNotFoundException::new);
+                itemRepository.findById(    itemDTO.getId()   )
+                        .orElseThrow(EntityNotFoundException::new);
 
         //set
-        item.setItemNm(itemDTO.getItemNm());
-        item.setPrice(itemDTO.getPrice());
-        item.setItemDetail(itemDTO.getItemDetail());
-        item.setItemSellStatus(itemDTO.getItemSellStatus());
-        item.setStockNumber(itemDTO.getStockNumber());
+        item.setItemNm(itemDTO.getItemNm()  );
+        item.setPrice(  itemDTO.getPrice());
+        item.setItemDetail(itemDTO.getItemDetail()  );
+        item.setItemSellStatus( itemDTO.getItemSellStatus() );
+        item.setStockNumber(itemDTO.getStockNumber()  );
+
 
 
 
@@ -145,6 +145,7 @@ public class ItemService {
             }
         }
 
+
         try {
             itemImgService.update(id, multipartFiles, mainino);
 
@@ -152,30 +153,33 @@ public class ItemService {
             // 리다이렉트 업데이트에 id값 가지고 갈까?
             // TODO: 2024-11-26
         }
+
+
+
         return  null;
     }
 
 
-
-
-
     public void remove(Long id){
-        log.info("서비스로 들어온 삭제할 아이템번호: " + id);
+        log.info("서비스로 들어온 삭제할 아이템번호 : " + id);
+
 
         itemRepository.deleteById(id);
 
-        //삭제를 테스트 할수 있는 조건 만들기
 
     }
 
-    public PageResponseDTO<ItemDTO> mainlist(PageRequestDTO pageRequestDTO) {
 
+
+    public PageResponseDTO<ItemDTO> mainlist(PageRequestDTO pageRequestDTO) {
 
         Pageable pageable = pageRequestDTO.getPageable("id");
         Page<Item> items =
                 itemRepository.getAdminItemPage(pageRequestDTO, pageable);
         List<ItemDTO> itemDTOPage =
-                items.getContent().stream().map(item -> modelMapper.map(item, ItemDTO.class))
+                items.getContent().stream().map(item -> modelMapper.map(item, ItemDTO.class).setItemImgDTOList(
+                                item.getItemImgList()
+                        )   )
                         .collect(Collectors.toList());
 
         PageResponseDTO<ItemDTO> itemDTOPageResponseDTO
@@ -186,7 +190,6 @@ public class ItemService {
                 .build();
         return itemDTOPageResponseDTO;
     }
-
 
 
 
