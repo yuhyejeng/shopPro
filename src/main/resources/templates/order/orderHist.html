@@ -51,26 +51,13 @@
                                         <strong><span th:text="${orderItemDTO.itemNm}" ></span></strong>
                                         <span th:text="${orderItemDTO.orderPrice} + '원'"></span>
                                         <span th:text="${orderItemDTO.count} + '개'"></span>
-
-
                                     </div>
-
-
                                 </div>
-
                             </div>
                         </th:block>
-
                     </div>
                 </div>
-
-
-
-
-
             </div>
-
-
         </th:block>
 
         <th:block th:with="start=${ (orders.number/maxPage)*maxPage+1}, end=(${(orders.totalPages == 0 ) ?  1 : (start + (maxPage -1 ) < orders.totalPages ? start + (maxPage -1 ) : orders.totalPages)})">
@@ -92,9 +79,6 @@
 
                     </th:block>
 
-
-
-
                     <li class="page-item" th:classappend="${orders.number+1 ge orders.totalPages} ? 'disabled':'' ">
                         <a   class="page-link" th:href="@{'/orders/' + ${orders.number +1}}" aria-label="Next">
                             <span aria-hidden="true">&raquo;</span>
@@ -102,8 +86,6 @@
                     </li>
                 </ul>
             </nav>
-
-
         </th:block>
 
     </th:block>

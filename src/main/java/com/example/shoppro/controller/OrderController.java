@@ -45,6 +45,7 @@ public class OrderController {
     @PostMapping("/order")
     public   ResponseEntity order(@Valid OrderDTO orderDTO, BindingResult bindingResult , Principal principal){
 
+
         //만약에 아이템id가 없다면
         //만약에 수량이 없다면
         // 유효성검사

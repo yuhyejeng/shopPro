@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +23,13 @@ public class OrderHistDTO {
 
     private Long orderId;   //주문아이디
 
-    private String orderDate;   //주문날짜
+    private LocalDateTime orderDate;   //주문날짜
 
     private OrderStatus orderStatus; //주문상태
 
     private List<OrderItemDTO> orderItemDTOList
             = new ArrayList<>();
-    //구매이력에 담길 구매아이템들
+
 
     public void addOrderItemDTO (OrderItemDTO orderItemDTO){
         orderItemDTOList.add(orderItemDTO);

@@ -151,9 +151,8 @@ public class CartController {
 
 
     @PostMapping("/cart/orders")
-    public ResponseEntity orderCartItem(
-            @RequestBody  CartOrderDTO cartOrderDTO, Principal principal
-    ){
+    public ResponseEntity orderCartItem(@RequestBody  CartOrderDTO cartOrderDTO, Principal principal){
+
         log.info(cartOrderDTO);
 
         List<CartOrderDTO> cartOrderDTOList = cartOrderDTO.getOrderDTOList();
