@@ -20,7 +20,7 @@ public class MemberDTO {
 
     //어차피 등록시에는 안씀
     private Long id;
-
+//
     @NotBlank
     @Size(min = 2, max = 10, message = "이름은 2자 이상 10자이하로 작성해주세요")
     private String name;
